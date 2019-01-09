@@ -14,6 +14,8 @@ public class ValidateUtil {
 
     private static final String decimal_regex = "[-+]{0,1}\\d+\\.\\d*|[-+]{0,1}\\d*\\.\\d+";
 
+    private static Pattern mobilePattern = Pattern.compile("^1\\d{10}$");
+
 
 
     public static boolean isDecimal(String shouldBeValidated) {
@@ -39,6 +41,15 @@ public class ValidateUtil {
         } else {
             return false;
         }
+    }
+
+
+    public static boolean validateMobile(String s) {
+        if (StringUtil.isBlank(s)) {
+            return false;
+        }
+        Matcher matcher = mobilePattern.matcher(s);
+        return matcher.matches();
     }
 
 

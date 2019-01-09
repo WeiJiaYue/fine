@@ -17,6 +17,10 @@ public class HeaderRange {
         return endRow > startRow;
     }
 
+    public boolean containsInRow(int rowNum) {
+        return rowNum >= startRow && rowNum <= endRow;
+    }
+
 
     @Override
     public String toString() {

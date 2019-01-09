@@ -1,8 +1,13 @@
 package com.yunbao.framework.excel;
 
+
+/**
+ * 数据矩阵
+ */
 public class Matrix {
 
 
+    private boolean resolved;  //标识是否成功解析出数据矩阵
 
     private short lastCellNum;
 
@@ -53,5 +58,14 @@ public class Matrix {
 
     public void setHeaderRange(HeaderRange headerRange) {
         this.headerRange = headerRange;
+    }
+
+
+    public boolean isResolved() {
+        return resolved;
+    }
+
+    public void setResolved(boolean resolved) {
+        this.resolved = resolved;
     }
 }

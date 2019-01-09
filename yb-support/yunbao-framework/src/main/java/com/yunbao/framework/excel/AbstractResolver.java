@@ -32,4 +32,10 @@ public abstract class AbstractResolver implements Resolver{
     public void isInvalidHeader(List<String> headers) {
 
     }
+
+
+    @Override
+    public String getMatchingKeyword() {
+        return null;
+    }
 }

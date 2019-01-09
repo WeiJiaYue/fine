@@ -31,7 +31,7 @@ public interface Resolver {
      * @param headerSize 标题的长度
      * @return 是否是有效的一行数据
      */
-    boolean invalidBodyRow(int invalidCellValCountOnRow,int headerSize);
+    boolean invalidBodyRow(int invalidCellValCountOnRow, int headerSize);
 
 
     /**
@@ -41,6 +41,9 @@ public interface Resolver {
      * @throws ExcelResolveException
      */
     void isInvalidHeader(List<String> headers);
+
+
+    String getMatchingKeyword();
 
 
 

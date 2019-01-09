@@ -1,12 +1,12 @@
 package com.yunbao.framework.excel;
 
 import com.yunbao.framework.util.StringUtil;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,10 +34,11 @@ public abstract class MatrixResolver extends AbstractResolver {
      * @param matrix    excel数据矩阵
      * @return if true 已经解析出header的区域
      */
-    protected abstract boolean resolveHeader(String cellValue, Row row, Matrix matrix);
+    protected abstract void resolveHeader(Row row, String cellValue, Matrix matrix);
 
     /**
      * 如果解析失败，抛出异常
+     *
      * @param headerRange
      * @throws ExcelResolveException
      */
@@ -47,6 +48,7 @@ public abstract class MatrixResolver extends AbstractResolver {
     /**
      * 判断解析的header是否正确
      * 如果解析失败，抛出异常
+     *
      * @param headers
      * @throws ExcelResolveException
      */
@@ -60,40 +62,47 @@ public abstract class MatrixResolver extends AbstractResolver {
 
     @Override
     public Matrix resolveMatrix(Workbook workbook, Sheet sheet) {
+        SpreadsheetVersion version = workbook.getSpreadsheetVersion();
         this.workbook = workbook;
         this.sheet = sheet;
         //第几个sheet
         Iterator<Row> rows = sheet.rowIterator();
         Matrix matrix = new Matrix();
-        List<Integer> blankRows = new ArrayList<>();
+        int blankRowCount = 0;
+        int blankRowIndex = -1;
         while (rows.hasNext()) {
             Row row = rows.next();
-            Iterator<Cell> cells = row.cellIterator();
-            boolean wholeRowIsNull = true; //标识整行都为空
-            while (cells.hasNext()) {
-                Cell cell = cells.next();
+            boolean wholeRowAreNull = true; //标识整行都为空
+            for (int i = row.getFirstCellNum(); i <= row.getLastCellNum() && i < version.getMaxColumns(); i++) {
+                Cell cell = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                 if (cell == null) {
                     continue;
                 }
-                //判断不要超过实际数据的最后一个列
+                //判断当matrix的lastCellNum已被解析时，不要超过实际数据的最后一个列
                 if (cell.getColumnIndex() > matrix.getLastCellNum() &&
                         matrix.getLastCellNum() != 0) {
                     break;
                 }
                 String value = getCellValue(cell);
                 if (StringUtil.isNotEmpty(value)) {
-                    wholeRowIsNull = false;
-                    resolveHeader(value, row, matrix);
+                    wholeRowAreNull = false;
+                    resolveHeader(row, value, matrix);
                 }
             }
-            if (wholeRowIsNull) {
-                blankRows.add(row.getRowNum());
-                if (blankRows.size() >= 10) {
-                    //todo 这边要取连续递增一行的10条记录，并且用第一条记录作为lastRow
-                    int planingLastRowNum = blankRows.get(9);
-                    matrix.setLastRowNum(planingLastRowNum);
+            if (wholeRowAreNull) {
+                if (blankRowCount == 5) {  //fixme 连续5行空行视为往下的都没数据了
+                    matrix.setLastRowNum(blankRowIndex - blankRowCount);
                     break;
                 }
+
+                if (row.getRowNum() - blankRowIndex == 1) { //表示是连续空行
+                    blankRowCount++;
+                } else {
+                    blankRowCount = 0;
+                }
+                blankRowIndex = row.getRowNum();
+
+
             } else {
                 matrix.setLastRowNum(sheet.getLastRowNum());
 
@@ -104,22 +113,60 @@ public abstract class MatrixResolver extends AbstractResolver {
         return matrix;
     }
 
-    protected void cellRange(Row headerRow, Matrix matrix) {
-        Iterator<Cell> cells = headerRow.cellIterator();
-        int firstCellNum = 0;
+    protected void headerCellRange(Sheet sheet, Row headerRow, Matrix matrix) {
+        HeaderRange headerRange = matrix.getHeaderRange();
+        //在header row 范围内第一个有值的列
+        int firstCellNum = -1;
         int lastCellNum = 0;
-        while (cells.hasNext()) {
-            Cell cell = cells.next();
-            if (cell == null) {
-                continue;
-            }
+        if (headerRange.endRow == headerRange.startRow) {
+            Iterator<Cell> cells = headerRow.cellIterator();
+            while (cells.hasNext()) {
+                Cell cell = cells.next();
+                if (cell == null) {
+                    continue;
+                }
+                String value = getCellValue(cell);
+                if (StringUtil.isNotEmpty(value)) {
+                    firstCellNum = cell.getColumnIndex();
+                    break;
 
-            String value = getCellValue(cell);
-            if (StringUtil.isNotEmpty(value)) {
-                firstCellNum = cell.getColumnIndex();
-                break;
+                }
+            }
+        } else {
+            Iterator<Row> headerRowRangeIterator = sheet.rowIterator();
+            while (headerRowRangeIterator.hasNext()) {
+                Row row = headerRowRangeIterator.next();
+                if (row.getRowNum() < headerRange.startRow
+                        || row.getRowNum() > headerRange.endRow) {
+                    continue;
+                }
+                Iterator<Cell> cells = row.cellIterator();
+                //当前行第一个有值得cell num
+                while (cells.hasNext()) {
+                    Cell cell = cells.next();
+                    if (cell == null) {
+                        continue;
+                    }
+                    String value = getCellValue(cell);
+                    if (StringUtil.isNotEmpty(value)) {
+                        int temp = cell.getColumnIndex();
+                        //获取合并单元格中最小的一个cellColumnIndex座位firstCellNum
+                        if (temp < firstCellNum || firstCellNum == -1) {
+                            firstCellNum = temp;
+                            break;
+                        }
+                        //提早结束
+                        if (cell.getColumnIndex() > firstCellNum) {
+                            break;
+                        }
+                    }
+
+                }
 
             }
+        }
+        if(firstCellNum==-1){
+            firstCellNum=0;
         }
         for (int i = headerRow.getLastCellNum(); i > firstCellNum; i--) {
             Cell cell = headerRow.getCell(i);
@@ -136,41 +183,6 @@ public abstract class MatrixResolver extends AbstractResolver {
         matrix.setFirstCellNum((short) firstCellNum);
         matrix.setLastCellNum((short) lastCellNum);
     }
-
-
-
-//    protected void cellRange(Row headerRow, Matrix matrix) {
-//        Iterator<Cell> cells = headerRow.cellIterator();
-//        int firstCellNum = 0;
-//        int lastCellNum = 0;
-//        while (cells.hasNext()) {
-//            Cell cell = cells.next();
-//            if (cell == null) {
-//                continue;
-//            }
-//
-//            String value = getCellValue(cell);
-//            if (StringUtil.isNotEmpty(value)) {
-//                firstCellNum = cell.getColumnIndex();
-//                break;
-//
-//            }
-//        }
-//        for (int i = headerRow.getLastCellNum(); i > firstCellNum; i--) {
-//            Cell cell = headerRow.getCell(i);
-//            if (cell == null) {
-//                continue;
-//            }
-//            String value = getCellValue(cell);
-//            if (StringUtil.isNotEmpty(value)) {
-//                lastCellNum = cell.getColumnIndex();
-//                break;
-//
-//            }
-//        }
-//        matrix.setFirstCellNum((short) firstCellNum);
-//        matrix.setLastCellNum((short) lastCellNum);
-//    }
 
 
 }

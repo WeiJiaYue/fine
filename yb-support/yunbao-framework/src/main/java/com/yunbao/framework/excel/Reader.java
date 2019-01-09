@@ -1,5 +1,6 @@
 package com.yunbao.framework.excel;
 
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.InputStream;
@@ -19,9 +20,17 @@ public interface Reader {
 
     List<String> readHeader(Workbook workbook, int sheetNo);
 
+    List<String> readHeader(Workbook workbook, Sheet sheet);
+
     ExcelDatum read(Workbook workbook, int sheetNo) throws Exception;
 
     ExcelDatum read(InputStream inputStream, int sheetNo) throws Exception;
+
+    ExcelDatum read(InputStream workbook, Sheet sheet) throws Exception;
+
+    ExcelDatum read(InputStream inputStream, String sheetName) throws Exception;
+
+    List<String> sheets(InputStream inputStream) ;
 
 
 }

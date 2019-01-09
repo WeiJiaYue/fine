@@ -1,9 +1,7 @@
 package com.yunbao.framework.excel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -13,11 +11,7 @@ public class ExcelDatum {
     private List<String> headers = new ArrayList<>(); //标题
 
 
-    /**
-     * key 为行数
-     * value 为一行的内容
-     */
-    private Map<Integer, List<String>> bodies = new HashMap<>(); //内容
+    private List<List<ExcelReader.CellVal>> bodies = new ArrayList<>(); //内容
 
 
     public List<String> getHeaders() {
@@ -28,11 +22,12 @@ public class ExcelDatum {
         this.headers = headers;
     }
 
-    public Map<Integer, List<String>> getBodies() {
+
+    public List<List<ExcelReader.CellVal>> getBodies() {
         return bodies;
     }
 
-    public void setBodies(Map<Integer, List<String>> bodies) {
+    public void setBodies(List<List<ExcelReader.CellVal>> bodies) {
         this.bodies = bodies;
     }
 }
