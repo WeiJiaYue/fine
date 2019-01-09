@@ -1,0 +1,173 @@
+\<%@ page contentType="text/html;charset=UTF-8" %>
+\<%@ include file="../common.jsp" %>
+\<%@ include file="../general.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${tableInfo.entityName} manage</title>
+    <link href="\${pageContext.request.contextPath}/static/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+    <link href="\${pageContext.request.contextPath}/static/css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
+    <link href="\${pageContext.request.contextPath}/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">
+    <link href="\${pageContext.request.contextPath}/static/css/animate.min.css" rel="stylesheet">
+    <link href="\${pageContext.request.contextPath}/static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
+    <link href="\${pageContext.request.contextPath}/static/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link href="\${pageContext.request.contextPath}/static/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+    <link href="\${pageContext.request.contextPath}/static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
+
+    <script src="\${pageContext.request.contextPath}/static/js/jquery.min.js?v=2.1.4"></script>
+    <script src="\${pageContext.request.contextPath}/static/js/bootstrap.min.js?v=3.3.6"></script>
+    <script src="\${pageContext.request.contextPath}/static/js/common/common.js"></script>
+    <script src="\${pageContext.request.contextPath}/static/js/plugins/validate/jquery.validate.min.js"></script>
+    <script src="\${pageContext.request.contextPath}/static/js/plugins/peity/jquery.peity.min.js"></script>
+    <script src="\${pageContext.request.contextPath}/static/js/plugins/jqgrid/i18n/grid.locale-cnffe4.js?0820"></script>
+    <script src="\${pageContext.request.contextPath}/static/js/plugins/jqgrid/jquery.jqGrid.minffe4.js?0820"></script>
+    <script src="\${pageContext.request.contextPath}/static/js/content.min.js?v=1.0.0"></script>
+
+    <script src="\${pageContext.request.contextPath}/static/js/${tableInfo.entityName}/${tableInfo.entityName}.js"></script>
+
+    <style>
+        #alertmod_table_list {
+            top: 900px !important;
+        }
+        .ui-jqgrid .ui-jqgrid-title{font-size:16px;font-family:"微软雅黑"} /*修改grid标题的字体大小*/
+        .ui-jqgrid-sortable {font-size:15px;font-family:"微软雅黑"} /*修改列名的字体大小*/
+        .ui-jqgrid tr.jqgrow td {font-size:13px; font-family:"微软雅黑"} /*修改表格内容字体*/
+    </style>
+
+    <script type="text/javascript">
+        //jqgrid初始化
+        $(document).ready(function () {
+            jqgrid_init();
+        });
+    </script>
+</head>
+<body class="gray-bg">
+
+
+<!-- 添加 -->
+<div class="text-center" style="display:none;">
+    <button type="button" id="simulationClick" class="btn btn-primary" data-toggle="modal"
+            data-target="#modal"></button>
+</div>
+<div class="modal inmodal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" id="closeAddTopBtnId" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">添加${tableInfo.entityName}</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" class="form-horizontal m-t" id="add${tableInfo.className}Form" enctype="multipart/form-data">
+                    <%
+                        for(fieldInfo in tableInfo.fieldInfoList){
+                            if(fieldInfo.primaryKey){
+                                continue;
+                            }
+                            println("\t\t\t\t\t<div class=\"form-group draggable\">");
+                            println("\t\t\t\t\t\t<label class=\"col-sm-3 control-label\">"+fieldInfo.comment+":<span style=\"color: red\">*</span></label>");
+                            println("\t\t\t\t\t\t<div class=\"col-sm-9\">");
+                            println("\t\t\t\t\t\t\t<input type=\"text\" name=\""+fieldInfo.fieldName+"\" id=\""+fieldInfo.fieldName+"ForAdd\" maxlength=50 class=\"form-control\" placeholder=\"请输入"+fieldInfo.comment+"\">");
+                            println("\t\t\t\t\t\t</div>");
+                            println("\t\t\t\t\t</div>");
+                        }
+                    %>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal" onclick="">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="add${tableInfo.className}()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 添加 end -->
+
+<!-- 编辑 start -->
+<div class="text-center" style="display:none;">
+    <button type="button" id="simulationClickUpdate" class="btn btn-primary" data-toggle="modal"
+            data-target="#modalUpdate"></button>
+</div>
+<div class="modal inmodal fade" id="modalUpdate" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" id="closeUpdateTopBtnId" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">编辑${tableInfo.entityName}</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" class="form-horizontal m-t" id="update${tableInfo.className}Form" enctype="multipart/form-data">
+                       <%
+                           for(fieldInfo in tableInfo.fieldInfoList){
+                               if(fieldInfo.primaryKey){
+                                   println("\t\t\t\t\t<input type=\"hidden\" id=\""+fieldInfo.fieldName+"ForUpdate\" name=\""+fieldInfo.fieldName+"\"/>");
+                                   continue;
+                               }
+                               println("\t\t\t\t\t<div class=\"form-group draggable\">");
+                               println("\t\t\t\t\t\t<label class=\"col-sm-3 control-label\">"+fieldInfo.comment+":<span style=\"color: red\">*</span></label>");
+                               println("\t\t\t\t\t\t<div class=\"col-sm-9\">");
+                               println("\t\t\t\t\t\t\t<input type=\"text\" name=\""+fieldInfo.fieldName+"\" id=\""+fieldInfo.fieldName+"ForUpdate\" maxlength=50 class=\"form-control\" placeholder=\"请输入"+fieldInfo.comment+"\">");
+                               println("\t\t\t\t\t\t</div>");
+                               println("\t\t\t\t\t</div>");
+                            }
+                       %>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal" onclick="">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="update${tableInfo.className}()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--  编辑  end -->
+<!-- 上部检索 start -->
+<div class="ibox float-e-margins">
+    <div class="ibox-title">
+        <h5>检索条件</h5>
+        <div class="ibox-tools">
+            <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+            </a>
+        </div>
+    </div>
+    <div class="ibox-content" id="eg">
+        <div class="click2edit wrapper">
+            <form role="form" id="searchForm" action="" method="post" class="hui-form">
+                <table>
+                    <%
+                	    for(fieldInfo in tableInfo.fieldInfoList){
+                		    if((fieldInfoLP.index-1)%3==0){
+                            	println("\t\t\t\t\t<tr>");
+                            }
+                		        println("\t\t\t\t\t\t<td>"+fieldInfo.comment+":</td>");
+                                println("\t\t\t\t\t\t<td>");
+                                println("\t\t\t\t\t\t\t<div class=\"col-sm-10\">");
+                                println("\t\t\t\t\t\t\t\t<input type=\"text\" name=\""+fieldInfo.fieldName+"\" id=\""+fieldInfo.fieldName+"ForSearch\" maxlength=50 class=\"form-control\" placeholder=\"请输入"+fieldInfo.comment+"\">");
+                                println("\t\t\t\t\t\t\t</div>");
+                                println("\t\t\t\t\t\t</td>");
+                		    if(fieldInfoLP.index%3==0 || fieldInfoLP.last){
+                            	 println("\t\t\t\t\t</tr>");
+                	        }
+                	    }
+                    %>
+                </table>
+                <br/>
+                <input class="btn btn-primary" type="button" value="查 询 " onclick="searchResult()">
+            </form>
+        </div>
+    </div>
+</div>
+<!-- 上部检索 end -->
+<div class="jqGrid_wrapper">
+    <table id="table_list" addButton='<shiro:hasPermission name="${tableInfo.entityName}:add">show</shiro:hasPermission>'
+           editButton='<shiro:hasPermission name="${tableInfo.entityName}:edit">show</shiro:hasPermission>'
+           delButton='<shiro:hasPermission name="${tableInfo.entityName}:del">show</shiro:hasPermission>'>
+    </table>
+    <div id="pager_list"></div>
+</div>
+
+
+</body>
+</html>

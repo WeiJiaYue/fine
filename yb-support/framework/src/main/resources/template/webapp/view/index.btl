@@ -1,0 +1,45 @@
+<!doctype html>
+<html ng-app="${tableInfo.className}">
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width">
+
+	<link rel="stylesheet" href="./../../styles/main.css">
+
+</head>
+<body>
+
+
+	<div ng-include="'./../common/nav.html'"></div>
+
+	<div class="common_in">
+		<div ng-include="'./../common/header.html'"></div>
+		<div class="main_wrap">
+			<div ng-view></div>
+		</div>
+	</div>
+
+	<script src="./../../vendor/jquery/dist/jquery.min.js"></script>
+	<script src="./../../vendor/jqueryui/jquery-ui.min.js"></script>
+	<!-- 表单验证JS -->
+	<script src="./../../vendor/validation/jquery.validationEngine-zh_CN.js"></script>
+	<script src="./../../vendor/validation/jquery.validationEngine.js"></script>
+
+	<script src="./../../vendor/angular/angular.min.js"></script>
+	<script src="./../../vendor/angular-animate/angular-animate.min.js"></script>
+	<script src="./../../vendor/bootstrap/ui-bootstrap-tpls-0.13.0.min.js"></script>
+	<script src="./../../vendor/angular-smart-table/dist/smart-table.min.js"></script>
+	<script src="./../../vendor/ui-date/src/angular.ui.date.js"></script>
+	<script src="./../../vendor/angular-route/angular-route.min.js"></script>
+
+	<script src="./../../scripts/app/app.js"></script>
+	<script src="./../../scripts/app/${tableInfo.entityName}.js"></script>
+	<script src="./../../scripts/constant/urlConstant.js"></script>
+	<script src="./../../scripts/services/common/CommonService.js"></script>
+	<script src="./../../scripts/services/common/CommonResource.js"></script>
+	<script src="./../../scripts/directives/directiveCommon.js"></script>
+	<script src="./../../scripts/controllers/${tableInfo.entityName}Controller.js"></script>
+</body>
+</html>

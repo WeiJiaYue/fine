@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="${mapperPkg}.${tableInfo.className}Mapper">
+	<select id="get${tableInfo.className}PageList" parameterType="java.util.Map" resultType="${modelPkg}.${tableInfo.className}">
+		SELECT
+			<%
+            		 for(fieldInfo in tableInfo.fieldInfoList){
+            		        if(fieldInfoLP.last){
+            		            println("\t\t\t"+fieldInfo.columnName+" as "+fieldInfo.fieldName+"");
+            		        }else{
+            		            println("\t\t\t"+fieldInfo.columnName+" as "+fieldInfo.fieldName+",");
+            		        }
+
+            		 }
+
+            %>
+		FROM ${tableInfo.tableName}
+		<where>
+		    deleted=0
+		    <%
+		        for(fieldInfo in tableInfo.fieldInfoList){
+		            println("\t\t\t<if test=\""+fieldInfo.fieldName+" != null and "+fieldInfo.fieldName+" != ''\"> AND "+fieldInfo.columnName+" = #{"+fieldInfo.fieldName+"}</if>");
+		        }
+
+		    %>
+        </where>
+	</select>
+
+
+
+
+
+</mapper>

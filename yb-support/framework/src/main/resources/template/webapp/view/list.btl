@@ -1,0 +1,73 @@
+<div class="sys_path">
+	<a href="/"> 首页 </a> &gt; <a href="#/${tableInfo.entityName}" class="current"> ${tableInfo.entityName}管理</a>
+</div>
+<div>
+	<div class="table-query">
+		<!-- Table Layout -->
+		<div class="basic_query">
+			<form class=" table-query-form" novalidate>
+				<table class="query_table">
+					<%
+						for(fieldInfo in tableInfo.fieldInfoList){
+
+							if((fieldInfoLP.index-1)%3==0){
+								println("\t\t\t\t\t<tr>");
+							}
+							println("\t\t\t\t\t\t<td><label for=\""+fieldInfo.fieldName+"\" class=\"control-label\">"+fieldInfo.fieldName+"：</label></td>");
+							println("\t\t\t\t\t\t<td><input class=\"form-control\" type=\"text\" id=\""+fieldInfo.fieldName+"\" ng-model=\"searchParams."+fieldInfo.fieldName+"\"/></td>");
+
+							if(fieldInfoLP.index%3==0 || fieldInfoLP.last){
+								println("\t\t\t\t\t</tr>");
+							}
+						}
+					%>
+				</table>
+				<div class="text-right table-query-btn mt10">
+					<input type="submit" value="查询" ng-click="queryList()" class="btn btn-sm btn-primary">
+					<a href="#/${tableInfo.entityName}/add" class="btn btn-sm btn-danger">添加</a>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div class="table-result mt20">
+		<table class="table table-striped text-center" st-pipe="callServer" st-table="displayed">
+			<thead>
+				<tr>
+					<%
+						for(fieldInfo in tableInfo.fieldInfoList){
+							println("\t\t\t\t\t<th st-sort=\""+fieldInfo.columnName+"\">"+fieldInfo.fieldName+"</th>");
+						}
+					%>
+					<th>操作</th>
+                </tr>
+			</thead>
+			<tbody ng-show="!isLoading">
+				<tr ng-repeat="row in displayed">
+					<%
+						for(fieldInfo in tableInfo.fieldInfoList){
+							println("\t\t\t\t\t<td>{{row."+fieldInfo.fieldName+"}}</td>");
+						}
+					%>
+					<td>
+						<a class="btn-txt btn-txt-green" href="#/${tableInfo.entityName}/modify/{{row.${tableInfo.primaryKeyField}}}">修改</a>
+                        <a class="btn-txt btn-txt-red" ng-click="remove(row.${tableInfo.primaryKeyField})">删除</a>
+					</td>
+                </tr>
+			</tbody>
+
+			<!-- TEMP end -->
+			<tbody ng-show="isLoading">
+				<tr>
+					<td colspan="${tableInfo.fieldInfoList.~size+1}" class="text-center">Loading ... </td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td class="text-center" st-pagination="" st-items-by-page="20" colspan="${tableInfo.fieldInfoList.~size+1}">
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>

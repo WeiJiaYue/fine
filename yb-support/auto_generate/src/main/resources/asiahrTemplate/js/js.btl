@@ -1,0 +1,262 @@
+var selected = null;
+$(function () {
+    $('#dg-list').datagrid({
+        fit: true,
+        striped: true,
+        border: true,
+        idField: 'id',
+        rownumbers: true,
+        fitColumns: true,
+        singleSelect: false,
+        pagination: true,
+        width: 700,
+        pageSize: 20,
+        pageList: [10, 15, 20],
+        url: '${tableInfo.entityName}/pageList',
+        queryParams: {},
+        loadMsg: 'loading...',
+        frozenColumns: [[{
+            field: 'ck',
+            checkbox: true
+        }]],
+        columns: [[
+            <%
+                for(fieldInfo in tableInfo.fieldInfoList){
+                    if(fieldInfo.primaryKey){
+                        println("\t\t\t{\"field\": \""+fieldInfo.fieldName+"\",\"title\":\""+fieldInfo.comment+"\"},");
+                    }else{
+                        if(fieldInfoLP.last){
+                            println("\t\t\t{\"field\": \""+fieldInfo.fieldName+"\",\"title\":\""+fieldInfo.comment+"\"}]],");
+                        }else{
+                            println("\t\t\t{\"field\": \""+fieldInfo.fieldName+"\",\"title\":\""+fieldInfo.comment+"\"},");
+                        }
+                    }
+                }
+            %>
+        loadFilter: function (data) {
+            if (data.success) {
+                var total = 0;
+                var rows = data.dataWrapper.page.list;
+                if (rows.length > 0) {
+                    total = data.dataWrapper.page.total;
+                }
+                var push = {
+                    "total": total,
+                    "rows": rows
+                };
+                return push;
+            } else {
+                console.log('error');
+            }
+        },
+        onLoadError: function () {
+            console.log('loadError');
+        }
+
+    });
+});
+
+function search() {
+    var arr =$('#searchForm').serializeArray();
+     $('#dg-list').datagrid('clearSelections');
+     $('#dg-list').datagrid('reload', {
+         queryParams: formDataToJson(arr)
+     });
+}
+
+// 多行添加代码
+var editIndex = undefined;
+function endEditing() {
+    if (editIndex == undefined) {
+        return true;
+    }
+    if ($('#dg-add').datagrid('validateRow', editIndex)) {
+        $('#dg-add').datagrid('endEdit', editIndex);
+        editIndex = undefined;
+        return true;
+    } else {
+        return false;
+    }
+}
+function onClickRow(index) {
+    if (editIndex != index) {
+        if (endEditing()) {
+            $('#dg-add').datagrid('selectRow', index).datagrid('beginEdit', index);
+            editIndex = index;
+        } else {
+            $('#dg-add').datagrid('selectRow', editIndex);
+        }
+    }
+}
+
+
+function addDialog() {
+    $('#dlg-add').dialog({
+        onResize: function () {
+            $('#dg-add').datagrid('resize');
+        },
+        onClose: function () {
+            editIndex = undefined;
+            $('#dg-add').datagrid('loadData', {
+                total: 0,
+                rows: []
+            });
+        }
+    }).dialog('open');
+}
+function save() {
+    if (endEditing()) {
+        $.ajax({
+            type: 'post',
+            url: '${tableInfo.entityName}/add',
+            data: $('#${tableInfo.entityName}Add').serialize(),
+            dataType: 'json',
+            async: true,
+            success: function (data) {
+                if (data.success) {
+                    $('#dg-list').datagrid('reload');
+                    $('#dg-list').datagrid('clearSelections');
+                    $('#dlg-add').dialog('close');
+                } else {
+                    // 出错也需要重载，避免重复数据
+                    $('#dg-list').datagrid('reload');
+                    $('#dg-list').datagrid('clearSelections');
+                    $.messager.show({
+                        title: '错误',
+                        msg: data.msg,
+                        showType: 'fade',
+                        style: {
+                            right: '',
+                            bottom: ''
+                        }
+                    });
+                }
+            },
+            error: function () {
+                // 出错也需要重载，避免重复数据
+                $('#dg-list').datagrid('reload');
+                $('#dg-list').datagrid('clearSelections');
+                $.messager.show({
+                    title: '错误',
+                    msg: '服务器正忙，请稍后再试！',
+                    showType: 'fade',
+                    style: {
+                        right: '',
+                        bottom: ''
+                    }
+                });
+            }
+        });
+    }
+}
+
+function updateDialog() {
+    var rows = $('#dg-list').datagrid('getSelections');
+    if (rows.length === 0) {
+        $.messager.alert('提示', '请选择要修改的条目！', 'info');
+    } else if (rows.length === 1) {
+        $('#id-edit').val(rows[0].id);
+        $('#fm-edit').form('load', rows[0]);
+        $('#dlg-edit').dialog({
+            width: 600,
+            height: 400,
+            closed: false,
+            cache: false,
+            resizable:true
+        });
+    } else {
+        $.messager.alert('提示', '修改条目时只可以选择一个！', 'info');
+    }
+}
+function update() {
+    // 这里是利用html中的form进行提交，所以需要加上项目路径AppCore.baseUrl
+    // 这里理论上应该使用put请求，但由于form标签不支持put方式，故使用post代替
+    $('#fm-edit').form('submit', {
+        url: AppCore.baseUrl + '${tableInfo.entityName}/update?id=' + $('#id-edit').val(),
+        onSubmit: function (param) {
+            return $(this).form('validate');
+        },
+        success: function (data) {
+            var data = eval('(' + data + ')');
+            if (data.success) {
+                $('#dg-list').datagrid('reload');
+                $('#dg-list').datagrid('clearSelections');
+                $('#dlg-edit').dialog('close');
+            } else {
+                $.messager.show({
+                    title: '错误',
+                    msg: data.msg,
+                    showType: 'fade',
+                    style: {
+                        right: '',
+                        bottom: ''
+                    }
+                });
+            }
+        }
+    });
+}
+
+function deleted() {
+    var rows = $('#dg-list').datagrid('getSelections');
+    if (rows.length > 0) {
+        $.messager.confirm('提示', '确定删除已选择的条目？', function (r) {
+            if (r) {
+                var ids = new Array();
+                $.each(rows, function (i, row) {
+                    ids.push(row.id);
+                });
+                $.ajax({
+                    type: 'get',
+                    url: '${tableInfo.entityName}/delete?ids=' + ids,
+                    // dataType: 'json',
+                    async: true,
+                    success: function (data) {
+                        if (data.success) {
+                            $('#dg-list').datagrid('reload');
+                            $('#dg-list').datagrid('clearSelections');
+                        } else {
+                            // 出错也需要重载
+                            $('#dg-list').datagrid('reload');
+                            $('#dg-list').datagrid('clearSelections');
+                            $.messager.show({
+                                title: '错误',
+                                msg: data.msg,
+                                showType: 'fade',
+                                style: {
+                                    right: '',
+                                    bottom: ''
+                                }
+                            });
+                        }
+                    },
+                    error: function () {
+                        // 出错也需要重载
+                        $('#dg-list').datagrid('reload');
+                        $('#dg-list').datagrid('clearSelections');
+                        $.messager.show({
+                            title: '错误',
+                            msg: '服务器正忙，请稍后再试！',
+                            showType: 'fade',
+                            style: {
+                                right: '',
+                                bottom: ''
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    } else {
+        $.messager.alert('提示', '请选择要删除的条目！', 'info');
+    }
+}
+
+function reload() {
+    $('#searchbox').searchbox('setValue', '');
+    $('#dg-list').datagrid('clearSelections');
+    $('#dg-list').datagrid('reload', {});
+}
+
+
+

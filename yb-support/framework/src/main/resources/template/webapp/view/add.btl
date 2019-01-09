@@ -1,0 +1,40 @@
+<div class="sys_path">
+	<a href="/"> 首页 </a>
+	&gt; <a href="#/${tableInfo.entityName}"> ${tableInfo.entityName}管理</a>
+	&gt; <a href="javascript:void(0)" class="current"> 添加${tableInfo.entityName}</a>
+</div>
+<form class="table-query-form" on-validated="add()" novalidate jq-validation>
+	<h3 class="view_sub_title">基本信息</h3>
+	<table class="query_table">
+	    <%
+	        var i = 0;
+            for(fieldInfo in tableInfo.fieldInfoList){
+
+                if(!fieldInfo.primaryKey){
+                    i=i+1;
+                }
+
+                if((i-1)%2==0 ){
+                    println("\t\t<tr>");
+                }
+
+                if(!fieldInfo.primaryKey){
+                    println("\t\t\t<td><label for=\""+fieldInfo.fieldName+"\" class=\"control-label\">"+fieldInfo.fieldName+"：</label></td>");
+                    println("\t\t\t<td><input class=\"form-control\" type=\"text\" id=\""+fieldInfo.fieldName+"\" ng-model=\"data."+fieldInfo.fieldName+"\"/></td>");
+                }
+
+                if((i!=0 && i%2==0) || fieldInfoLP.last){
+                    println("\t\t</tr>");
+                }
+            }
+        %>
+	</table>
+
+    <div class="text-right table-query-btn mt10">
+        <input type="submit" class="btn btn-sm btn-primary" value="保存">
+        <a href="#/${tableInfo.entityName}" class="btn btn-sm btn-success">返回</a>
+    </div>
+</form>
+
+
+

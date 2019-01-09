@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="expires" content="0"/>
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="../../assets/common/jquery-easyui/themes/gray/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/common/jquery-easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/common/jquery-easyui-custom/easyui.custom.css">
+    <!-- scripts -->
+    <script type="text/javascript" src="../../assets/common/jquery-easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="../../assets/common/jquery-easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../../assets/common/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="../../assets/common/jquery-easyui-custom/easyui.custom.js"></script>
+    <script type="text/javascript" src="../../assets/common/framework.js"></script>
+    <!-- JSON2 -->
+    <!--[if lt IE 8]>
+    <script type="text/javascript" src="../../assets/common/json-js/json2.js"></script>
+    <![endif]-->
+    <!-- page scripts -->
+    <script type="text/javascript" src="../../assets/views/${tableInfo.entityName}/${tableInfo.entityName}.js"></script>
+    <script type="text/javascript" src="../../assets/common/typeFormatter/typeMapping.js"></script>
+
+
+</head>
+
+<body>
+<div class="easyui-layout" data-options="fit:true">
+    <!-- 列表 -->
+    <div data-options="region:'center',border:false">
+        <table id="dg-list" data-options="toolbar:'#tb-list'">
+        </table>
+
+        <!-- 菜单 -->
+        <div id="tb-list">
+            <div id="searchMenu" style="padding:30px 0;">
+                <form id="searchForm">
+                    <table class="">
+                        <%
+                           for(fieldInfo in tableInfo.fieldInfoList){
+                               if((fieldInfoLP.index-1)%3==0){
+                                   println("\t\t\t\t\t\t<tr>");
+                               }
+                                   println("\t\t\t\t\t\t\t<td><label for=\""+fieldInfo.fieldName+"ForSearch\" class=\"control-label\">"+fieldInfo.comment+":</label></td>");
+                                   println("\t\t\t\t\t\t\t<td><input class=\"easyui-textbox\" type=\"\" name=\""+fieldInfo.fieldName+"\" id=\""+fieldInfo.fieldName+"ForSearch\"/></td>");
+                                   println("");
+                               if(fieldInfoLP.index%3==0 || fieldInfoLP.last){
+                                    println("\t\t\t\t\t\t</tr>");
+                               }
+                           }
+                        %>
+                    </table>
+                 </form>
+                <div style="padding:5px 30px 0px 600px;">
+                    <button class="easyui-linkbutton" data-options="iconCls:'icon-search'"
+                                                style="width:80px;" onclick="search()">查询</button>
+                </div>
+
+            </div>
+
+            <a href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true"
+               onclick="addDialog()">新增</a>
+            <a href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true"
+               onclick="updateDialog()">修改</a>
+            <a href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true"
+               onclick="deleted()">删除</a>
+            <a href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-reload',plain:true"
+               onclick="reload()">刷新</a>
+        </div>
+    </div>
+</div>
+<!-- 新增 -->
+<div id="dlg-add" class="easyui-dialog" style="width:600px;height:320px;top:30px;overflow-y:scroll;"
+     data-options="title:'新增',closed:true,buttons:'#dlg-btn-add',resizable:true,maximizable:true,modal:true">
+    <div style="margin:5px;">
+        <form class="form-horizontal m-t" id="${tableInfo.entityName}Add"
+              enctype="multipart/form-data">
+            <table class="easyui-layout">
+                <%
+                    for(fieldInfo in tableInfo.fieldInfoList){
+                        if((fieldInfoLP.index-1)%2==0){
+                            println("\t\t\t\t\t<tr>");
+                        }
+                        if(fieldInfo.primaryKey){
+                            continue;
+                        }
+                        println("\t\t\t\t\t\t<td><label for=\""+fieldInfo.fieldName+"ForAdd\" class=\"control-label\">"+fieldInfo.comment+":</label></td>");
+                        println("\t\t\t\t\t\t<td><input class=\"easyui-validatebox\" name=\""+fieldInfo.fieldName+"\" id=\""+fieldInfo.fieldName+"ForAdd\"/></td>");
+                        println("");
+                        if(fieldInfoLP.index%2==0 || fieldInfoLP.last){
+                             println("\t\t\t\t\t</tr>");
+                        }
+                    }
+                %>
+            </table>
+        </form>
+    </div>
+    <div id="dlg-btn-add">
+        <a href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="save()">确定</a>
+        <a href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"
+           onclick="$('#dlg-add').dialog('close');">取消</a>
+    </div>
+
+    <!-- 修改 -->
+    <div id="dlg-edit" class="easyui-dialog" style="width:320px;padding:20px 30px;top:30px"
+         data-options="title:'修改',closed:true,buttons:'#dlg-btn-edit'">
+        <form id="fm-edit" method="post">
+            <input type="hidden" id="id-edit"/>
+            <div style="margin:5px;">
+                <table style="border-width:0;" align="center">
+                    <%
+                        for(fieldInfo in tableInfo.fieldInfoList){
+                            if((fieldInfoLP.index-1)%2==0){
+                                println("\t\t\t\t\t<tr>");
+                            }
+                            if(fieldInfo.primaryKey){
+                                continue;
+                            }
+
+                            println("\t\t\t\t\t\t<td><label for=\""+fieldInfo.fieldName+"ForUpdate\" class=\"control-label\">"+fieldInfo.comment+":</label></td>");
+                            println("\t\t\t\t\t\t<td><input class=\"easyui-validatebox\" name=\""+fieldInfo.fieldName+"\" id=\""+fieldInfo.fieldName+"ForUpdate\"/></td>");
+                            println("");
+                            if(fieldInfoLP.index%2==0 || fieldInfoLP.last){
+                                 println("\t\t\t\t\t</tr>");
+                            }
+                        }
+                    %>
+                </table>
+            </div>
+        </form>
+        <div id="dlg-btn-edit">
+            <a href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-ok'"
+               onclick="update()">确定</a>
+            <a href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"
+               onclick="$('#dlg-edit').dialog('close');">取消</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+
+

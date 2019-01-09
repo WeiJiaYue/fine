@@ -1,0 +1,279 @@
+var basePath = $('#basePath').val();
+//jqgrid加载数据
+function jqgrid_init() {
+    $.jgrid.defaults.styleUI = "Bootstrap";
+    $("#table_list").jqGrid({
+        url: basePath + '/${tableInfo.entityName}/get${tableInfo.className}PageList',
+        datatype: "json",
+        mtype: 'POST',
+        height: 'auto',
+        autowidth: true,
+        shrinkToFit: false,
+        autoScroll: true,
+        //scrollrows: false,
+        //scrolling: 'auto',
+        //forceFit:true,
+        rowNum: 10,
+        rownumbers: true,
+        rowList: [10, 20, 30, 40, 50],
+        loadError: function (xhr, st, err) {
+            art.dialog.error("<s:text name='SYSTEM_ERROR'/>");
+        },
+        colNames: [
+            <%
+                for(fieldInfo in tableInfo.fieldInfoList){
+                    if(fieldInfo.primaryKey){
+                        print("\t\t\t\"ID\",");
+
+                    }else{
+                        if(fieldInfoLP.last){
+                            print("\""+fieldInfo.comment+"\"],");
+                            println();
+                        }else{
+                            print("\""+fieldInfo.comment+"\",");
+                        }
+                    }
+                }
+            %>
+        colModel: [
+            <%
+                 for(fieldInfo in tableInfo.fieldInfoList){
+                     if(fieldInfo.primaryKey){
+                         println("\t\t\t{name: \""+fieldInfo.fieldName+"\", index: \""+fieldInfo.fieldName+"\",width: 60, align: \"center\", sorttype: \"int\", search: true},");
+
+                     }else{
+                         if(fieldInfoLP.last){
+                             println("\t\t\t{name: \""+fieldInfo.fieldName+"\", index: \""+fieldInfo.fieldName+"\",editable: true, width: 60, align: \"center\", sorttype: \"int\", search: true}],");
+                             println();
+                         }else{
+                             println("\t\t\t{name: \""+fieldInfo.fieldName+"\", index: \""+fieldInfo.fieldName+"\",editable: true, width: 60, align: \"center\", sorttype: \"int\", search: true},");
+                         }
+                     }
+                 }
+            %>
+        pager: "#pager_list",
+        viewrecords: true,
+        emptyrecords: "没有数据",
+        caption: "${tableInfo.entityName}列表",
+        hidegrid: false
+    });
+    $("#table_list").setSelection(4, true);
+    // 权限用数据
+    var addButton = $("#table_list").attr("addButton");
+    var editButton = $("#table_list").attr("editButton");
+    var delButton = $("#table_list").attr("delButton");
+    var jqGrid = $("#table_list").jqGrid("navGrid", "#pager_list", {
+        edit: false,
+        add: false,
+        del: false,
+        search: false
+    }, {height: 200, reloadAfterSubmit: true});
+    if (delButton == "show") {
+        jqGrid.navButtonAdd('#pager_list', {//自定义修改按钮
+            caption: "删除",
+            buttonicon: "glyphicon-trash",
+            onClickButton: openDelWin,
+            title: "删除所选记录",
+            position: "first"
+        })
+    }
+    if (editButton == "show") {
+       jqGrid.navButtonAdd('#pager_list', {//自定义修改按钮
+            caption: "修改",
+            buttonicon: "glyphicon-edit",
+            onClickButton: openEditWin,
+            title: "编辑所选记录",
+            position: "first"
+        })
+    }
+    if (addButton == "show") {
+        jqGrid.navButtonAdd('#pager_list', {//自定义添加按钮
+            caption: "添加",
+            buttonicon: "glyphicon-plus",
+            onClickButton: openAddWin,
+            title: "添加新纪录",
+            position: "first"
+        });
+    }
+    $(window).bind("resize", function () {
+        var width = $(".jqGrid_wrapper").width();
+        $("#table_list").setGridWidth(width)
+    });
+}
+//打开添加窗口
+function openAddWin() {
+    //模拟点击事件显示添加窗口
+    $("#simulationClick").trigger("click");
+}
+
+function openEditWin() {
+    var rowId = $('#table_list').jqGrid('getGridParam', 'selrow');
+    var rowData = $("#table_list").jqGrid('getRowData', rowId);
+    if (!rowId) {
+        basic_sweet_alert("友情提示", "请选择一条记录");
+        return;
+    }
+    <%
+        for(fieldInfo in tableInfo.fieldInfoList){
+            if(fieldInfo.primaryKey){
+                println("\t$('#"+fieldInfo.fieldName+"ForUpdate\').val(rowData.id);");
+
+            }else{
+                println("\t$('#"+fieldInfo.fieldName+"ForUpdate\').val(rowData."+fieldInfo.fieldName+");");
+            }
+        }
+    %>
+    $("#simulationClickUpdate").trigger("click");
+
+}
+
+//打开删除窗口,并删除
+function openDelWin() {
+    var rowId = $('#table_list').jqGrid('getGridParam', 'selrow');
+    var rowData = $("#table_list").jqGrid('getRowData', rowId);
+    if (!rowId) {
+        basic_sweet_alert("友情提示", "请选择一条记录");
+        return;
+    }
+    callback_sweet_alert("友情提示", "您确定要删除吗?", "warning", function () {
+        $.ajax({
+            url: basePath + "/${tableInfo.entityName}/delete?id=" + rowData.id,
+            type: "post",
+            success: function (data) {
+                if (data.resultCode == "0000") {
+                    jQuery("#table_list").trigger("reloadGrid");
+                    setTimeout(function () {
+                        basic_sweet_alert("友情提示", "操作成功", "success");
+                    }, 200);
+                } else {
+                    setTimeout(function () {
+                        basic_sweet_alert("友情提示", data.resultMsg, "error");
+                    }, 200)
+                }
+            },
+            error: function () {
+                basic_sweet_alert("友情提示", "操作失败", "error");
+                return true;
+            }
+        });
+    });
+}
+
+
+function update${tableInfo.className}() {
+    <%
+        for(fieldInfo in tableInfo.fieldInfoList){
+            if(fieldInfo.primaryKey){
+                println("\tvar "+fieldInfo.fieldName+" =$('#"+fieldInfo.fieldName+"ForUpdate\').val();");
+                continue;
+
+            }else{
+                println("\tvar "+fieldInfo.fieldName+" =$('#"+fieldInfo.fieldName+"ForUpdate\').val();");
+                println("\tif(!"+fieldInfo.fieldName+"||"+fieldInfo.fieldName+"==null||"+fieldInfo.fieldName+"==''){");
+                println("\t\tbasic_sweet_alert(\"友情提示\", \"请输入"+fieldInfo.comment+"\");");
+                println("\t\treturn false;");
+                println("\t}");
+                println();
+            }
+            if(fieldInfoLP.last){
+                println("\t$.ajax({");
+                println("\t\turl: basePath + \"/"+tableInfo.entityName+"/update?id=\"+$('#idForUpdate').val(),");
+
+            }
+        }
+    %>
+        type: "post",
+        data: new FormData($('#update${tableInfo.className}Form')[0]),
+        processData: false,
+        contentType: false,
+        success: function (data) {
+            if (data.resultCode == "0000") {
+                //刷新表格数据
+                jQuery("#table_list").trigger("reloadGrid");
+                basic_sweet_alert("友情提示", "操作成功", "success");
+                $('#closeUpdateTopBtnId').click();
+                return true;
+            } else {
+                var message = data.resultMsg;
+                if (data.resultCode == "0009") {
+                    message = "操作失败";
+                }
+                basic_sweet_alert("友情提示", message, "error");
+                return true;
+            }
+        },
+        error: function () {
+        basic_sweet_alert("友情提示", "操作失败", "error");
+        return true;
+        }
+    });
+}
+
+
+
+//add
+function add${tableInfo.className}() {
+    <%
+        for(fieldInfo in tableInfo.fieldInfoList){
+            if(fieldInfo.primaryKey){
+                println("\tvar "+fieldInfo.fieldName+" =$('#"+fieldInfo.fieldName+"ForAdd\').val();");
+
+            }else{
+                println("\tvar "+fieldInfo.fieldName+" =$('#"+fieldInfo.fieldName+"ForAdd\').val();");
+                println("\tif(!"+fieldInfo.fieldName+"||"+fieldInfo.fieldName+"==null||"+fieldInfo.fieldName+"==''){");
+                println("\t\tbasic_sweet_alert(\"友情提示\", \"请输入"+fieldInfo.comment+"\");");
+                println("\t\treturn false;");
+                println("\t}");
+                println();
+            }
+            if(fieldInfoLP.last){
+                println("\t$.ajax({");
+                println("\t\turl: basePath + \"/"+tableInfo.entityName+"/create\",");
+            }
+        }
+    %>
+        type: "post",
+        data: new FormData($('#add${tableInfo.className}Form')[0]),
+        processData: false,
+        contentType: false,
+        success: function (data) {
+            if (data.resultCode == "0000") {
+                //刷新表格数据
+                jQuery("#table_list").trigger("reloadGrid");
+                basic_sweet_alert("友情提示", "操作成功", "success");
+                $('#closeUpdateTopBtnId').click();
+                return true;
+            } else {
+                var message = data.resultMsg;
+                if (data.resultCode == "0009") {
+                    message = "操作失败";
+                }
+                basic_sweet_alert("友情提示", message, "error");
+                return true;
+            }
+        },
+        error: function () {
+        basic_sweet_alert("友情提示", "操作失败", "error");
+        return true;
+        }
+    });
+
+}
+
+
+//查询
+function searchResult() {
+    var queryData = {
+        <%
+            for(fieldInfo in tableInfo.fieldInfoList){
+                if(!fieldInfoLP.last){
+                    println("\t\t"+fieldInfo.fieldName+" :$('#"+fieldInfo.fieldName+"ForSearch').val(),");
+                }else{
+                    println("\t\t"+fieldInfo.fieldName+" :$('#"+fieldInfo.fieldName+"ForSearch').val()");
+                }
+
+            }
+        %>
+    };
+    $("#table_list").jqGrid("setGridParam", {postData: queryData, page: 1}).trigger("reloadGrid");
+}

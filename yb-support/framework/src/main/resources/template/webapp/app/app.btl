@@ -1,0 +1,27 @@
+/*
+    Angular Module -- ${tableInfo.className}
+*/
+var ${tableInfo.className} = angular.module('${tableInfo.className}',['app','ngRoute','smart-table','ui.date','ui.bootstrap','ngAnimate']);
+
+${tableInfo.className}.config(['$routeProvider',
+	function($routeProvider) {
+
+		$routeProvider.
+		when('/', {
+			templateUrl: 'partial/${tableInfo.entityName}List.html',
+			controller: '${tableInfo.entityName}ListCtrl'
+		}).
+		when('/modify/:id',{
+			templateUrl: 'partial/${tableInfo.entityName}Update.html',
+			controller: '${tableInfo.entityName}UpdateCtrl'
+		}).
+		when('/add',{
+			templateUrl: 'partial/${tableInfo.entityName}Add.html',
+			controller: '${tableInfo.entityName}AddCtrl'
+		}).
+		otherwise({
+			redirectTo: '/'
+		});
+	}]);
+
+

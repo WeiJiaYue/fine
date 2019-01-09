@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="${mapperPkg}.${tableInfo.className}Mapper">
+	<select id="get${tableInfo.className}PageList" parameterType="java.util.Map" resultType="${modelPkg}.${tableInfo.className}">
+		SELECT
+			*
+		FROM ${tableInfo.tableName}
+		<where>
+		    <%
+		        for(fieldInfo in tableInfo.fieldInfoList){
+		            println("\t\t\t<if test=\""+fieldInfo.fieldName+" != null and "+fieldInfo.fieldName+" != ''\"> AND "+fieldInfo.columnName+" = #{"+fieldInfo.fieldName+"}</if>");
+		        }
+
+		    %>
+        </where>
+	</select>
+
+
+	<update id="update" parameterType="${modelPkg}.${tableInfo.className}">
+    		update ${tableInfo.tableName}
+    		set
+    		<%
+                for(fieldInfo in tableInfo.fieldInfoList){
+                    println("\t\t\t<if test=\""+fieldInfo.fieldName+" != null and "+fieldInfo.fieldName+" != ''\">"+fieldInfo.columnName+" = #{"+fieldInfo.fieldName+"},</if>");
+                }
+
+            %>
+    		update_per = #{updateUser}
+    		<%
+    		    for(fieldInfo in tableInfo.fieldInfoList){
+    		        if(fieldInfo.primaryKey){
+    		            println("\t\t\twhere "+fieldInfo.columnName+" = #{"+fieldInfo.fieldName+"}");
+    		        }
+                }
+            %>
+    </update>
+</mapper>

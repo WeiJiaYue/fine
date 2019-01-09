@@ -1,0 +1,16 @@
+app.constant('URL',{
+    <%
+        for(tf in tableInfoList){
+            println("\t"+tf.entityName+"List : "+"\"/"+tf.entityName+"/"+tf.entityName+"JsonList.do\",");
+            println("\t"+tf.entityName+"Get : "+"\"/"+tf.entityName+"/get.do\",");
+            println("\t"+tf.entityName+"Add : "+"\"/"+tf.entityName+"/create.do\",");
+            println("\t"+tf.entityName+"Update : "+"\"/"+tf.entityName+"/update.do\",");
+            if(tfLP.last){
+                println("\t"+tf.entityName+"Delete : "+"\"/"+tf.entityName+"/del.do\"");
+            }else{
+                println("\t"+tf.entityName+"Delete : "+"\"/"+tf.entityName+"/del.do\",");
+            }
+            println();
+        }
+    %>
+});
