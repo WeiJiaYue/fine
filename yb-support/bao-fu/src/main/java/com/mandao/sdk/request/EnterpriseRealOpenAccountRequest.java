@@ -1,5 +1,6 @@
 package com.mandao.sdk.request;
 
+import com.mandao.BankCode;
 import com.mandao.sdk.Dictionary;
 import com.mandao.sdk.RequiredParam;
 
@@ -26,7 +27,35 @@ public class EnterpriseRealOpenAccountRequest extends Request {
     private Dictionary.IndividualCertType idCardType;         //法人个人证件类型
 
     @RequiredParam
-    private String certificateNo;                             //证件号
+    private String legalIdCardNo;                             //法人证件号
+
+    @RequiredParam
+    private String mobile;                                    //法人手机号
+
+    @RequiredParam
+    private String bankCardNo;                                //银行卡号
+
+    @RequiredParam
+    private String bankCode;                                  //银行编码
+
+    @RequiredParam
+    private String accountName;                               //账户名
+
+    @RequiredParam
+    private String bankName;                                  //银行名称
+
+    /**
+     * {@link com.mandao.sdk.Dictionary.AccountType}
+     */
+    @RequiredParam
+    private Integer acctType;
+
+    /**
+     * {@link com.mandao.sdk.Dictionary.BusinessType}
+     */
+    @RequiredParam
+    private Integer businessType;
+
 
     private String cardStartDate;                             //证件签发日 YYYY-MM-DD
 
@@ -83,14 +112,6 @@ public class EnterpriseRealOpenAccountRequest extends Request {
 
     public void setIdCardType(Dictionary.IndividualCertType idCardType) {
         this.idCardType = idCardType;
-    }
-
-    public String getCertificateNo() {
-        return certificateNo;
-    }
-
-    public void setCertificateNo(String certificateNo) {
-        this.certificateNo = certificateNo;
     }
 
     public String getCardStartDate() {
@@ -155,5 +176,77 @@ public class EnterpriseRealOpenAccountRequest extends Request {
 
     public void setBusinessLicenseEndDate(String businessLicenseEndDate) {
         this.businessLicenseEndDate = businessLicenseEndDate;
+    }
+
+
+    public String getLegalIdCardNo() {
+        return legalIdCardNo;
+    }
+
+    public void setLegalIdCardNo(String legalIdCardNo) {
+        this.legalIdCardNo = legalIdCardNo;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getBankCardNo() {
+        return bankCardNo;
+    }
+
+    public void setBankCardNo(String bankCardNo) {
+        this.bankCardNo = bankCardNo;
+    }
+
+    public String getBankCode() {
+        return bankCode;
+    }
+
+    public void setBankCode(String bankCode) {
+        if(bankCardNo!=null){
+            this.bankCode= BankCode.getSwiftCodeFromAliPay(bankCardNo);
+            if(this.bankCode!=null){
+                this.bankCode= BankCode.toLocaleSwift(bankCode);
+            }
+        }else{
+            this.bankCode = bankCode;
+        }
+    }
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
+
+    public Integer getAcctType() {
+        return acctType;
+    }
+
+    public void setAcctType(Integer acctType) {
+        this.acctType = acctType;
+    }
+
+    public Integer getBusinessType() {
+        return businessType;
+    }
+
+    public void setBusinessType(Integer businessType) {
+        this.businessType = businessType;
+    }
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
     }
 }

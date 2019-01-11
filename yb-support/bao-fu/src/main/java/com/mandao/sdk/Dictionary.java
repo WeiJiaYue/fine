@@ -57,6 +57,24 @@ public interface Dictionary {
         CONSUME
     }
 
+    /**
+     * 对账类型
+     */
+    enum TradeBillType implements Dictionary {
+        /**
+         * 充值
+         */
+        RECHARGE,
+        /**
+         * 提现
+         */
+        WITHDRAW,
+        /**
+         * 消费
+         */
+        CONSUME
+    }
+
 
     /**
      * 企业证件类型
@@ -94,21 +112,64 @@ public interface Dictionary {
      * 提现账号类型
      */
     enum WithdrawalAccountType implements Dictionary {
-        TO_PRIVATE(1, "对私"),
-        TO_PUBLIC(2, "对公");
+        TO_PRIVATE("对私", 1),
+        TO_PUBLIC("对公", 2);
         private int value;
         private String key;
 
-        WithdrawalAccountType(int value, String key) {
+        WithdrawalAccountType(String key, int value) {
             this.value = value;
             this.key = key;
         }
 
-        public final int getAccountType() {
+        public final int get() {
             return value;
         }
 
 
+    }
+
+
+    /**
+     * 业务类型
+     */
+    enum BusinessType implements Dictionary {
+        TO_PRIVATE("对私", 2),
+        TO_PUBLIC("对公", 1);
+        private int value;
+        private String key;
+
+        BusinessType(String key, int value) {
+            this.value = value;
+            this.key = key;
+        }
+
+        public final int get() {
+            return value;
+        }
+
+
+    }
+
+    /**
+     * 账户类型
+     */
+    enum AccountType implements Dictionary {
+        FuMin("富民银行账户", 1),
+        OTHERS("他行账户", 2),
+        HU_JIN("互金账户", 3);
+
+        private String key;
+        private int value;
+
+        AccountType(String key, int value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public final int get() {
+            return value;
+        }
     }
 
 

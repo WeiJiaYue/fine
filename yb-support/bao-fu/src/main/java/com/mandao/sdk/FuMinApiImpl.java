@@ -34,7 +34,7 @@ public class FuMinApiImpl implements FuMinApi {
 
 
     @Override
-    public String gatewayPay(Request request) {
+    public String gatewayPay(GatewayPaymentRequest request) {
         request.setApiType(ApiType.GATEWAY);
         return execute(GATEWAY_PAYMENT, request);
     }
@@ -57,8 +57,32 @@ public class FuMinApiImpl implements FuMinApi {
         return JsonUtil.jsonToObject(execute(TRANSACTION, request), TransactionProcessingResponse.class);
     }
 
+
+    @Override
+    public Response merchantConsumption(MerchantConsumptionRequest request) {
+        return JsonUtil.jsonToObject(execute(MERCHANT_CONSUMPTION, request), MerchantConsumptionResponse.class);
+    }
+
+
+    @Override
+    public Response getElectronicReceipt(ElectronicReceiptRequest request) {
+        return JsonUtil.jsonToObject(execute(ELECTRONIC_RECEIPT, request), ElectronicReceiptResponse.class);
+    }
+
+    @Override
+    public Response getPaymentVoucher(PaymentVoucherRequest request) {
+        return JsonUtil.jsonToObject(execute(PAYMENTVOUCHER_DOWNLOAD, request), PaymentVoucherResponse.class);
+    }
+
+
+    @Override
+    public Response getTradeBillFile(TradeBillRequest request) {
+        return JsonUtil.jsonToObject(execute(DOWNLOAD_TRADEBILL_FILE, request), TradeBillResponse.class);
+    }
+
+
     protected String execute(String api, Request request) {
-        request.validateRequiredParams(request.getClass(), new ArrayList<>());
+        request.validateRequiredParams(request.getClass(), new ArrayList<String>());
         String reqData = JsonUtil.objectToJson(request);
         /* 业务报文加密签名 */
         String signature = Signer.sign(reqData, PRIMARY_KEY_PATH, PRIMARY_KEY_PWD);

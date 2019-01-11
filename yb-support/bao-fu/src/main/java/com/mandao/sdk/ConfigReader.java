@@ -9,35 +9,40 @@ import java.util.Properties;
 
 public class ConfigReader {
 
-    private static final String configPath = "/Users/lewis/GoWorkspace/yb-support/bao-fu/src/main/webapp/System_Config/app.properties";
+    private static final String configPath = "/Users/lewis/JavaWorkspace/fine/yb-support/bao-fu/src/main/webapp/System_Config/app.properties";
 
 
-    private static final String cerPath = "/Users/lewis/GoWorkspace/yb-support/bao-fu/src/main/webapp/CER/";
+    private static final String cerPath = "/Users/lewis/JavaWorkspace/fine/yb-support/bao-fu/src/main/webapp/CER/";
 
 
     private static final Map<String, String> configCache = new HashMap<>();
 
 
-    public static final String PRIMARY_KEY_FILE;// 商户私钥文件名
+    public static String PRIMARY_KEY_FILE;// 商户私钥文件名
 
-    public static final String PUBLIC_KEY_FILE ;// 公钥文件名
+    public static  String PUBLIC_KEY_FILE ;// 公钥文件名
 
-    public static final String PRIMARY_KEY_PATH  ; //私钥绝对路径
+    public static  String PRIMARY_KEY_PATH  ; //私钥绝对路径
 
-    public static final String PUBLIC_KEY_PATH ;  //公钥绝对路径
+    public static  String PUBLIC_KEY_PATH ;  //公钥绝对路径
 
-    public static final String PRIMARY_KEY_PWD ;  //商户私钥密码
+    public static  String PRIMARY_KEY_PWD ;  //商户私钥密码
 
-    public static final String API_SERVICE_URL  ;// 直连接口请求地址
+    public static  String API_SERVICE_URL  ;// 直连接口请求地址
 
-    public static final String API_GATEWAY_URL  ;// 网关接口请求地址
+    public static  String API_GATEWAY_URL  ;// 网关接口请求地址
 
-    public static final String PLATFORM_NO ;// 平台编号
+    public static  String PLATFORM_NO ;// 平台编号
 
-    public static final String CERT_SERIAL ;// 证书序号
+    public static  String CERT_SERIAL ;// 证书序号
 
 
     static {
+       load();
+    }
+
+
+    public static void load(){
         loadPropertyFile(configPath);
         checkCertificate();
         PRIMARY_KEY_FILE = configCache.get("pfx.name");

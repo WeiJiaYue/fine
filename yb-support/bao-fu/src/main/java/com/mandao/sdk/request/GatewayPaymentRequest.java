@@ -4,6 +4,13 @@ import com.mandao.sdk.RequiredParam;
 
 import java.math.BigDecimal;
 
+
+/**
+ * 网关支付请求参数
+ * 网关支付只适用于企业用户
+ *
+ * 用于企业充值
+ */
 public class GatewayPaymentRequest extends Request {
 
 

@@ -1,6 +1,7 @@
 package com.mandao.sdk;
 
 import com.mandao.sdk.request.*;
+import com.mandao.sdk.response.ElectronicReceiptResponse;
 import com.mandao.sdk.response.Response;
 
 public interface FuMinApi {
@@ -15,20 +16,14 @@ public interface FuMinApi {
      * 用户余额接口名称
      */
     String USER_BALANCE_QUERY = "USER_BALANCE_QUERY";
-
-
     /**
      * 企业实名绑卡开户接口名称
      */
     String ENTERPRISE_REAL_OPEN_ACCOUNT = "ENTERPRISE_REAL_OPEN_ACCOUNT";
-
-
     /**
      * 网关支付
      */
     String GATEWAY_PAYMENT = "WEB";
-
-
     /**
      * 提现接口名称
      */
@@ -49,6 +44,21 @@ public interface FuMinApi {
      */
     String MERCHANT_CONSUMPTION = "MERCHANT_CONSUMPTION";
 
+    /**
+     * 电子回单下载（提现的回单）
+     */
+    String ELECTRONIC_RECEIPT = "ELECTRONIC_RECEIPT";
+
+    /**
+     * 支付凭证下载（消费分账、分润的凭证）
+     */
+    String PAYMENTVOUCHER_DOWNLOAD = "PAYMENTVOUCHER_DOWNLOAD";
+
+    /**
+     * 对账文件下载
+     * 对账文件，用于对账的。对账文件会汇总一天内的交易明细，在次日生成。
+     */
+    String DOWNLOAD_TRADEBILL_FILE = "DOWNLOAD_TRADEBILL_FILE";
 
     /**
      * 获取余额
@@ -100,11 +110,41 @@ public interface FuMinApi {
 
     /**
      * 网关支付
-     *
+     * 网关支付只适用于企业用户
+     * 用于企业充值
      * @param request
      * @return
      */
-    String gatewayPay(Request request);
+    String gatewayPay(GatewayPaymentRequest request);
+
+    /**
+     * 消费分账/分润
+     */
+    Response merchantConsumption(MerchantConsumptionRequest request);
+
+    /**
+     * 电子回单下载（提现的回单）
+     */
+    Response getElectronicReceipt(ElectronicReceiptRequest request);
+
+    /**
+     * 支付凭证下载（消费分账、分润的凭证）
+     */
+    Response getPaymentVoucher(PaymentVoucherRequest request);
+
+
+    /**
+     * 对账文件下载
+     * 对账文件，用于对账的。对账文件会汇总一天内的交易明细，在次日生成。
+     */
+    Response getTradeBillFile(TradeBillRequest request);
+
+
+
+
+
+
+
 
 
     /**
