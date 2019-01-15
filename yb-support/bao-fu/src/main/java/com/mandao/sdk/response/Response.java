@@ -1,5 +1,7 @@
 package com.mandao.sdk.response;
 
+import com.mandao.sdk.Dictionary;
+
 public abstract class Response {
 
 
@@ -11,7 +13,7 @@ public abstract class Response {
     /**
      * see {@link com.mandao.sdk.Dictionary.TradingStatus}
      */
-    private String status;
+    private Dictionary.TradingStatus status;
 
 
     public String getRespCode() {
@@ -30,11 +32,11 @@ public abstract class Response {
         this.respMsg = respMsg;
     }
 
-    public String getStatus() {
+    public Dictionary.TradingStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Dictionary.TradingStatus status) {
         this.status = status;
     }
 

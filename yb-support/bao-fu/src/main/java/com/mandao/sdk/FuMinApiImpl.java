@@ -82,7 +82,12 @@ public class FuMinApiImpl implements FuMinApi {
 
 
     protected String execute(String api, Request request) {
-        request.validateRequiredParams(request.getClass(), new ArrayList<String>());
+        if (request instanceof MerchantConsumptionRequest) {
+            request.validateRequiredParams(request.getClass(), new ArrayList<String>(), "userNo");
+        } else {
+            request.validateRequiredParams(request.getClass(), new ArrayList<String>());
+        }
+
         String reqData = JsonUtil.objectToJson(request);
         /* 业务报文加密签名 */
         String signature = Signer.sign(reqData, PRIMARY_KEY_PATH, PRIMARY_KEY_PWD);

@@ -172,5 +172,26 @@ public interface Dictionary {
         }
     }
 
+    /**
+     * 账户状态
+     */
+    enum AccountState implements Dictionary{
+        CLOSED("关闭", 0),
+        NORMAL("正常", 1),
+
+        ;
+        private String key;
+        private int value;
+
+        AccountState(String key, int value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public final int get() {
+            return value;
+        }
+    }
+
 
 }

@@ -2,6 +2,8 @@ package com.mandao.sdk.response;
 
 
 
+import com.mandao.sdk.Dictionary;
+
 import java.math.BigDecimal;
 
 /**
@@ -14,7 +16,7 @@ public class BalanceResponse extends Response {
 
     private BigDecimal sumFrozenAmount;         //合计冻结金额
 
-    private String accountState;                //余额账户状态
+    private Dictionary.AccountState accountState;//余额账户状态
 
     private BigDecimal balance;                 //余额账户余额
 
@@ -47,11 +49,11 @@ public class BalanceResponse extends Response {
         this.sumFrozenAmount = sumFrozenAmount;
     }
 
-    public String getAccountState() {
+    public Dictionary.AccountState getAccountState() {
         return accountState;
     }
 
-    public void setAccountState(String accountState) {
+    public void setAccountState(Dictionary.AccountState accountState) {
         this.accountState = accountState;
     }
 

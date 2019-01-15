@@ -3,13 +3,14 @@ package com.mandao.sdk.request;
 import com.mandao.sdk.RequiredParam;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 
 /**
  * 网关支付请求参数
  * 网关支付只适用于企业用户
  *
- * 用于企业充值
+ * 用于企业充值以及企业转账企业
  */
 public class GatewayPaymentRequest extends Request {
 
@@ -35,11 +36,12 @@ public class GatewayPaymentRequest extends Request {
     @RequiredParam
     private String subTradeType;            //交易子类型：5充值
 
-    private String consumerType;            //消费类型：0消费 1充值
+    @RequiredParam
+    private String consumerType;            //消费类型：0消费（企业转账给其他企业） 1充值(充值到自己账户)
 
     private String tradeRemark;             //交易备注
 
-    private String prorateInfo;             //分账信息（json数组字符串）
+    private List<ProrateInfo> prorateInfo;             //分账信息（json数组字符串） //consumerType为1，分账用户传自己，为0，传其他用户
 
 
     public BigDecimal getAmount() {
@@ -114,11 +116,12 @@ public class GatewayPaymentRequest extends Request {
         this.tradeRemark = tradeRemark;
     }
 
-    public String getProrateInfo() {
+
+    public List<ProrateInfo> getProrateInfo() {
         return prorateInfo;
     }
 
-    public void setProrateInfo(String prorateInfo) {
+    public void setProrateInfo(List<ProrateInfo> prorateInfo) {
         this.prorateInfo = prorateInfo;
     }
 }

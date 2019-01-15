@@ -6,17 +6,17 @@ import com.mandao.sdk.RequiredParam;
 public class TransactionProcessingRequest extends Request {
 
     @RequiredParam
-    private String prequestNo;          //原订单流水号
+    private String preRequestNo;          //原订单流水号
 
     @RequiredParam
     private Dictionary.BizType bizType; //交易订单类型
 
-    public String getPrequestNo() {
-        return prequestNo;
+    public String getPreRequestNo() {
+        return preRequestNo;
     }
 
-    public void setPrequestNo(String prequestNo) {
-        this.prequestNo = prequestNo;
+    public void setPreRequestNo(String preRequestNo) {
+        this.preRequestNo = preRequestNo;
     }
 
     public Dictionary.BizType getBizType() {

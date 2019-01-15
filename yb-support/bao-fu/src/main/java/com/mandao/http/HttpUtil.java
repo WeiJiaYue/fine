@@ -81,7 +81,6 @@ public class HttpUtil {
 
     public static SimpleHttpResponse doRequest(SimpleHttpClient simpleHttpclient, HttpSendModel httpSendModel,
                                                String charSet, String cer) throws Exception {
-
         HttpRequestBase httpRequest = buildHttpRequest(httpSendModel);
 
         if (httpSendModel.getUrl().startsWith("https://")) {

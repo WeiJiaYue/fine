@@ -2,8 +2,8 @@ package com.mandao.sdk.request;
 
 
 import com.mandao.sdk.RequiredParam;
-
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 消费分账/分润请求参数
@@ -11,26 +11,27 @@ import java.math.BigDecimal;
 public class MerchantConsumptionRequest extends Request {
 
 
-
+    @RequiredParam
+    private String outUserNo;                           //出账方用户编号
 
     @RequiredParam
-    private String outUserNo;           //出账方用户编号
+    private String inUserNo;                            //入账方用户编号
 
     @RequiredParam
-    private BigDecimal amount;          //交易金额
+    private BigDecimal amount;                          //交易金额
 
     @RequiredParam
-    private boolean guarantee=false;    //false非担保(默认) true:担保
+    private boolean guarantee = false;                  //false非担保(默认) true:担保
 
     @RequiredParam
-    private BigDecimal poundageAmount;  //手续费
+    private BigDecimal poundageAmount;                  //手续费
 
     @RequiredParam
-    private String ledgerAccountInfo;   //分账信息（json数组字符串）
+    private List<LedgerAccountInfo> ledgerAccountInfo;      //分账信息（json数组字符串）
 
-    private String feeSplittingInfo;    //分润信息（json数组字符串）
+    private String feeSplittingInfo;                    //分润信息（json数组字符串）
 
-    private String remark;              //交易备注
+    private String remark;                              //交易备注
 
 
     public String getOutUserNo() {
@@ -39,6 +40,15 @@ public class MerchantConsumptionRequest extends Request {
 
     public void setOutUserNo(String outUserNo) {
         this.outUserNo = outUserNo;
+    }
+
+
+    public String getInUserNo() {
+        return inUserNo;
+    }
+
+    public void setInUserNo(String inUserNo) {
+        this.inUserNo = inUserNo;
     }
 
     public BigDecimal getAmount() {
@@ -65,12 +75,13 @@ public class MerchantConsumptionRequest extends Request {
         this.poundageAmount = poundageAmount;
     }
 
-    public String getLedgerAccountInfo() {
+
+    public List<LedgerAccountInfo> getLedgerAccountInfo() {
         return ledgerAccountInfo;
     }
 
-    public void setLedgerAccountInfo(String ledgerAccountInfo) {
-        this.ledgerAccountInfo = ledgerAccountInfo;
+    public void setLedgerAccountInfo(List<LedgerAccountInfo> ledgerAccountInfos) {
+        this.ledgerAccountInfo = ledgerAccountInfos;
     }
 
     public String getFeeSplittingInfo() {
@@ -88,4 +99,6 @@ public class MerchantConsumptionRequest extends Request {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
+
 }

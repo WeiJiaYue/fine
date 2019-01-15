@@ -1,5 +1,7 @@
 package com.mandao.sdk.response;
 
+import com.mandao.sdk.Dictionary;
+
 import java.math.BigDecimal;
 
 public class BalanceRecord {
@@ -13,7 +15,7 @@ public class BalanceRecord {
 
     private BigDecimal balance; //交易后余额
 
-    private String bizType;     //交易类型
+    private Dictionary.BizType bizType;     //交易类型
 
     public String getTradeDate() {
         return tradeDate;
@@ -47,11 +49,12 @@ public class BalanceRecord {
         this.balance = balance;
     }
 
-    public String getBizType() {
+
+    public Dictionary.BizType getBizType() {
         return bizType;
     }
 
-    public void setBizType(String bizType) {
+    public void setBizType(Dictionary.BizType bizType) {
         this.bizType = bizType;
     }
 }

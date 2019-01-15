@@ -3,8 +3,10 @@ package com.mandao.sdk.request;
 
 import com.mandao.sdk.FuMinApi;
 import com.mandao.sdk.RequiredParam;
+
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -12,7 +14,7 @@ import java.util.Random;
 /**
  * 富民银行请求参数
  */
-public abstract class Request {
+public abstract class Request implements BaseRequest{
 
 
     @RequiredParam
@@ -76,7 +78,8 @@ public abstract class Request {
         this.apiType = apiType;
     }
 
-    public void validateRequiredParams(Class clz, List<String> error) {
+    public void validateRequiredParams(Class clz, List<String> error, String... excludeFields) {
+        List<String> excludes = Arrays.asList(excludeFields);
         Field[] fields = clz.getDeclaredFields();
         for (Field f : fields) {
             boolean present = f.isAnnotationPresent(RequiredParam.class);
@@ -84,6 +87,11 @@ public abstract class Request {
                 try {
                     if (!f.isAccessible()) {
                         f.setAccessible(true);
+                    }
+                    if(!excludes.isEmpty()){
+                        if(excludes.contains(f.getName())){
+                            continue;
+                        }
                     }
                     Object val = f.get(this);
                     if (val == null) {
@@ -95,7 +103,7 @@ public abstract class Request {
             }
         }
         if (clz.getSuperclass() != Object.class) {
-            validateRequiredParams(clz.getSuperclass(), error);
+            validateRequiredParams(clz.getSuperclass(), error,excludeFields);
         }
         if (!error.isEmpty()) {
             throw new IllegalArgumentException(this.getClass().getSimpleName() + error);
