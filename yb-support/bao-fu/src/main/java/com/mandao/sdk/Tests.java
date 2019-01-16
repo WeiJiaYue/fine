@@ -48,7 +48,7 @@ public class Tests {
         r4.setUserNo(enNo1);
         r4.setPageNo(1);
         r4.setPageSize(10);
-        r4.setTradeStartDate(DateUtil.convertToString(new Date(), DateUtil.YYYY_MM_DD));
+        r4.setTradeStartDate("2018-12-12");
         r4.setTradeEndDate(DateUtil.convertToString(new Date(), DateUtil.YYYY_MM_DD));
         Response response = new FuMinApiImpl().getAccountDetails(r4);
         System.out.println(response);
