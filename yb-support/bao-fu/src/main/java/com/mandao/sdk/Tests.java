@@ -33,7 +33,7 @@ public class Tests {
         TransactionProcessingRequest r = new TransactionProcessingRequest();
         r.setUserNo(enNo1);
         r.setBizType(Dictionary.BizType.RECHARGE);
-        r.setPreRequestNo("201901151616328608916");
+        r.setPreRequestNo("201901181650467624325");
         Response response = new FuMinApiImpl().getTransactionProcessing(r);
         System.out.println(response);
     }
@@ -87,7 +87,7 @@ public class Tests {
     @Test
     public void gatewayPay() {
         GatewayPaymentRequest r3 = new GatewayPaymentRequest();
-        r3.setAmount(new BigDecimal("1000"));
+        r3.setAmount(new BigDecimal("20000"));
         r3.setPageUrl("https://www.xinshetong.com/");
         r3.setMobile("18715626526");
         r3.setRealName("余卫家");
@@ -97,7 +97,7 @@ public class Tests {
 
         r3.setConsumerType("1");
         List<ProrateInfo> prorateInfos = new ArrayList<>();
-        prorateInfos.add(new ProrateInfo(enNo1, new BigDecimal("1000")));
+        prorateInfos.add(new ProrateInfo(enNo1, new BigDecimal("20000")));
         r3.setProrateInfo(prorateInfos);
         System.out.println(new FuMinApiImpl().gatewayPay(r3));
     }
