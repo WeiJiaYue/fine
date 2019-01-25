@@ -14,7 +14,6 @@ public class MerchantConsumptionRequest extends Request {
     @RequiredParam
     private String outUserNo;                           //出账方用户编号
 
-    @RequiredParam
     private String inUserNo;                            //入账方用户编号
 
     @RequiredParam
@@ -27,7 +26,7 @@ public class MerchantConsumptionRequest extends Request {
     private BigDecimal poundageAmount;                  //手续费
 
     @RequiredParam
-    private List<LedgerAccountInfo> ledgerAccountInfo;      //分账信息（json数组字符串）
+    private List<LedgerAccountInfo> ledgerAccountInfo;  //分账信息（json数组字符串）
 
     private String feeSplittingInfo;                    //分润信息（json数组字符串）
 

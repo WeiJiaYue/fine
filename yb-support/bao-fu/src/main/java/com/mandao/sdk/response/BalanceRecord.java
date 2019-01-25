@@ -57,4 +57,16 @@ public class BalanceRecord {
     public void setBizType(Dictionary.BizType bizType) {
         this.bizType = bizType;
     }
+
+
+    @Override
+    public String toString() {
+        return "BalanceRecord{" +
+                "tradeDate='" + tradeDate + '\'' +
+                ", requestNo='" + requestNo + '\'' +
+                ", amount=" + amount +
+                ", balance=" + balance +
+                ", bizType=" + bizType +
+                '}';
+    }
 }

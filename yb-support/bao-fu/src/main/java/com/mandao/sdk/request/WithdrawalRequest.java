@@ -13,7 +13,7 @@ public class WithdrawalRequest extends Request {
      * 提现账号类型{@link com.mandao.sdk.Dictionary.WithdrawalAccountType}的value值
      */
     @RequiredParam
-    private String inAccountType;
+    private Integer inAccountType;
 
     @RequiredParam
     private String bankCardNo;                  //提现卡号
@@ -40,11 +40,11 @@ public class WithdrawalRequest extends Request {
         this.amount = amount;
     }
 
-    public String getInAccountType() {
+    public Integer getInAccountType() {
         return inAccountType;
     }
 
-    public void setInAccountType(String inAccountType) {
+    public void setInAccountType(Integer inAccountType) {
         this.inAccountType = inAccountType;
     }
 

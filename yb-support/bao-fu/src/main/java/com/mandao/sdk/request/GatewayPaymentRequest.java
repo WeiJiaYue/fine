@@ -24,7 +24,7 @@ public class GatewayPaymentRequest extends Request {
     @RequiredParam
     private String realName;                //姓名
 
-    @RequiredParam
+//    @RequiredParam
     private String pageUrl;                 //前台跳转银联地址
 
     @RequiredParam
@@ -37,7 +37,7 @@ public class GatewayPaymentRequest extends Request {
     private String subTradeType;            //交易子类型：5充值
 
     @RequiredParam
-    private String consumerType;            //消费类型：0消费（企业转账给其他企业） 1充值(充值到自己账户)
+    private String consumerType;            //消费类型：1不垫资的充值
 
     private String tradeRemark;             //交易备注
 

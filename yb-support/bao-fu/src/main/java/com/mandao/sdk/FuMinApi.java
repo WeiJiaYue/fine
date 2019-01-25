@@ -7,6 +7,19 @@ import com.mandao.sdk.response.Response;
 public interface FuMinApi {
 
     String REQUEST_CHANNEL = "FMBANK";
+
+
+    /**
+     * 个人实名绑卡
+     */
+    String REAL_BIND_CARD = "REAL_BIND_CARD";
+
+
+    /**
+     * 企业实名绑卡
+     */
+    String ENTERPRISE_REAL_BIND_CARD = "ENTERPRISE_REAL_BIND_CARD";
+
     /**
      * 个人实名开户接口名称
      */
@@ -84,6 +97,17 @@ public interface FuMinApi {
 
 
     /**
+     * 个人实名绑卡
+     */
+    Response individualRealBindCard(IndividualRealBindCardRequest request);
+
+
+    /**
+     * 企业实名绑卡
+     */
+    Response enterpriseRealBindCard(EnterpriseRealBindCardRequest request);
+
+    /**
      * 提现
      *
      * @param request
@@ -94,6 +118,7 @@ public interface FuMinApi {
 
     /**
      * 获取账户明细
+     * 提现到绑定卡
      *
      * @return
      */
@@ -112,6 +137,7 @@ public interface FuMinApi {
      * 网关支付
      * 网关支付只适用于企业用户
      * 用于企业充值
+     *
      * @param request
      * @return
      */
@@ -140,13 +166,6 @@ public interface FuMinApi {
     Response getTradeBillFile(TradeBillRequest request);
 
 
-
-
-
-
-
-
-
     /**
      * 接口类型
      */
@@ -162,6 +181,13 @@ public interface FuMinApi {
          */
         SERVICE
 
+    }
+
+
+    FuMinApi instance = new FuMinApiImpl();
+
+    static FuMinApi getInstance() {
+        return instance;
     }
 
 

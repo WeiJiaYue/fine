@@ -5,7 +5,6 @@ import com.mandao.sdk.response.*;
 import com.mandao.sign.Signer;
 import com.mandao.http.HttpUtil;
 import com.radarwin.framework.util.JsonUtil;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +31,17 @@ public class FuMinApiImpl implements FuMinApi {
         return JsonUtil.jsonToObject(execute(ENTERPRISE_REAL_OPEN_ACCOUNT, request), EnterpriseRealOpenAccountResponse.class);
     }
 
+
+    @Override
+    public Response individualRealBindCard(IndividualRealBindCardRequest request) {
+        return JsonUtil.jsonToObject(execute(REAL_BIND_CARD, request), IndividualRealBindCardResponse.class);
+
+    }
+
+    @Override
+    public Response enterpriseRealBindCard(EnterpriseRealBindCardRequest request) {
+        return JsonUtil.jsonToObject(execute(ENTERPRISE_REAL_BIND_CARD, request), EnterpriseRealBindCardResponse.class);
+    }
 
     @Override
     public String gatewayPay(GatewayPaymentRequest request) {
