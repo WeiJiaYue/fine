@@ -13,21 +13,23 @@ public class GenerateSample {
 //                        "mysql");
 
         ConnectionCreator connectionCreator = new DatabaseConnectionCreator
-                ("192.168.1.151",
+                ("127.0.0.1",
                         "3306",
                         "root",
-                        "passW0rd",
-                        "yunbao_flexible",
+                        "123456",
+                        "liveimage",
                         "mysql");
 
         AutoGenerator codeGenerator = new GeneratorWithDBMetadata(connectionCreator);
 
         codeGenerator.propertiesSet(
                 new AutoGenerateProperties.Builder()
-                        .inProject("flexible_employment")
-                        .inBasePackage("com.yunbao.flexible")
+                        .inProject("live-image")
+                        .inBasePackage("cn.liveimage")
                         .neededMapper(true)
                         .neededModel(true)
+                        .neededService(true)
+                        .neededController(true)
                          /**
                          * 如果你的mapper.xml 是需要生成在
                          * classpath的Resources下面的话
@@ -37,7 +39,7 @@ public class GenerateSample {
                         .generatedInResourcesPath(true)
                         .build())
                 .generateCode(
-                        "salary");
+                        "individual");
 
 
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="${mapperPkg}.${tableInfo.className}Mapper">
-	<select id="get${tableInfo.className}PageList" parameterType="java.util.Map" resultType="${modelPkg}.${tableInfo.className}">
+	<select id="get${tableInfo.className}s" parameterType="java.util.Map" resultType="${modelPkg}.${tableInfo.className}">
 		SELECT
 			<%
             		 for(fieldInfo in tableInfo.fieldInfoList){

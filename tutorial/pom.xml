@@ -25,6 +25,12 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.asiahr</groupId>
+            <artifactId>auto_generate_crm</artifactId>
+            <version>1.0.0-release</version>
+        </dependency>
     </dependencies>
 
 

@@ -3,7 +3,7 @@ package ${controllerPkg};
 
 import ${modelPkg}.${tableInfo.className};
 import ${servicePkg}.${tableInfo.className}Service;
-import ${projectPkg}.utils.ResponseUtil;
+import ${projectPkg}.util.ResponseUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import com.radarwin.framework.web.controller.BaseController;
 import com.radarwin.framework.web.response.ResponseWrapper;
-import com.radarwin.framework.util.StringUtil;
 
 
 
@@ -43,10 +42,10 @@ public class ${tableInfo.className}Controller extends BaseController {
 
     @RequestMapping(value = "/get")
     @ResponseBody
-    public ResponseWrapper get(String id) {
+    public ResponseWrapper get(Long id) {
         ${tableInfo.className} ${tableInfo.entityName} = new ${tableInfo.className}();
-        if (StringUtil.isNotBlank(id)) {
-           ${tableInfo.entityName}= ${tableInfo.entityName}Service.selectByKey(id);
+        if (id!=null) {
+           ${tableInfo.entityName}= ${tableInfo.entityName}Service.selectByPrimaryKey(id);
         }
         return ResponseUtil.successResponse("${tableInfo.entityName}",${tableInfo.entityName});
     }
@@ -76,17 +75,8 @@ public class ${tableInfo.className}Controller extends BaseController {
 	@RequestMapping(value = "/delete")
     @ResponseBody
     public ResponseWrapper delete(String ids) {
-        ${tableInfo.className} ${tableInfo.entityName} = new ${tableInfo.className}();
-        int result=0;
-        if (StringUtil.isNotBlank(ids)) {
-            ${tableInfo.entityName}.setId(Long.valueOf(ids));
-            ${tableInfo.entityName}.setDeleted(true);
-            result = ${tableInfo.entityName}Service.update(${tableInfo.entityName});
-        }
-    	if(result>0){
-            return ResponseUtil.errorResponse("删除成功");
-        }
-        return ResponseUtil.errorResponse("删除失败");
+        ${tableInfo.entityName}Service.logicDelete(ids);
+        return ResponseUtil.errorResponse("删除成功");
     }
 
 
