@@ -22,9 +22,12 @@ public class GenerateSample {
 
         AutoGenerator codeGenerator = new GeneratorWithDBMetadata(connectionCreator);
 
+        codeGenerator.setRootDir("/Users/lewis/JavaWorkspace/");
+
+
         codeGenerator.propertiesSet(
                 new AutoGenerateProperties.Builder()
-                        .inProject("live-image")
+                        .inProject("liveimage manage/liveimage")
                         .inBasePackage("cn.liveimage")
                         .neededMapper(true)
                         .neededModel(true)
@@ -39,7 +42,7 @@ public class GenerateSample {
                         .generatedInResourcesPath(true)
                         .build())
                 .generateCode(
-                        "individual");
+                        );
 
 
     }

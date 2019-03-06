@@ -23,7 +23,7 @@ public class GeneratorWithDBMetadata implements AutoGenerator {
     private static final Logger logger = Logger.getLogger(GeneratorWithDBMetadata.class.getSimpleName());
     private static final String DEFAULT_TEMPLATE_PATH = "/asiahrTemplate";
     private static final String charEncoding = Charset.defaultCharset().name();
-    private static final String rootDir = System.getProperty("user.dir");
+    private static String rootDir = System.getProperty("user.dir");
     private static final String entityDir = "model";
     private static final String controllerDir = "controller";
     private static final String serviceDir = "service";
@@ -753,6 +753,11 @@ public class GeneratorWithDBMetadata implements AutoGenerator {
 
     public GeneratorWithDBMetadata changeMapperDir(String mapperDir) {
         this.mapperDir = mapperDir;
+        return this;
+    }
+
+    public GeneratorWithDBMetadata setRootDir(String rootDir) {
+        GeneratorWithDBMetadata.rootDir = rootDir;
         return this;
     }
 }

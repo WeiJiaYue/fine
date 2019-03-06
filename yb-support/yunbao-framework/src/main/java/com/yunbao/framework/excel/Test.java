@@ -20,6 +20,8 @@ public class Test {
 //         path = "/Users/lewis/Downloads/real data/测试测试工资模版.xlsx";
         path = "/Users/lewis/Downloads/excel 导入模板/导入工资条模板.xlsx";
         path = "/Users/lewis/Downloads/excel 导入模板/导入工资条模板的副本.xlsx";
+        path = "/Users/lewis/Downloads/副本更新【BMF】2018年依赖登记台账 （5月始）(40).xlsx";
+
 
 
         List<String> validateColumns = new ArrayList<>();
@@ -29,7 +31,7 @@ public class Test {
         File f = new File(path);
         InputStream inputStream = new FileInputStream(f);
         Reader reader = ReaderFactory.create(ReaderFactory.NotificationType.mobile);
-        ExcelDatum excelDatum = reader.read(inputStream, 0);
+        ExcelDatum excelDatum = reader.read(inputStream, 1);
 
         for (String header : excelDatum.getHeaders()) {
             System.out.print(header);

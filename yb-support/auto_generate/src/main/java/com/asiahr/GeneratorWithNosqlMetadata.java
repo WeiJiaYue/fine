@@ -19,4 +19,15 @@ public class GeneratorWithNosqlMetadata implements AutoGenerator{
          */
         return null;
     }
+
+
+    @Override
+    public AutoGenerator setRootDir(String rootDir) {
+        return null;
+    }
+
+    @Override
+    public AutoGenerator changeMapperDir(String mapperDir) {
+        return null;
+    }
 }

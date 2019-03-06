@@ -1,6 +1,7 @@
 package com.yunbao.framework.excel;
 
 
+import static com.yunbao.framework.excel.SalarySlipRequiredColumn.getValidateHeaders;
 import static com.yunbao.framework.excel.SalarySlipRequiredColumn.*;
 
 public class ReaderFactory {

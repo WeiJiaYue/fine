@@ -3,6 +3,7 @@ package com.yunbao.framework.excel;
 import com.yunbao.framework.util.StringUtil;
 import org.apache.poi.ss.usermodel.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -75,7 +76,7 @@ public class ExcelReader extends HeaderReader {
                 }
                 String header = headers.get(i - offset);
                 CellVal cellVal = new CellVal(header, value);
-                if (enableValidate) {
+                if (validator.needToValidate()) {
                     cellVal = validator.requiredCellVal(cellVal);
                 } else {
                     if (StringUtil.isEmpty(cellVal.getVal())) {
@@ -95,6 +96,9 @@ public class ExcelReader extends HeaderReader {
                 bodies.add(datum);
             }
         }
+//        if(!bodies.isEmpty()&&validator.needToValidate()){
+//            validator.validateDuplicate(bodies,matrixResolver.getMatchingKeyword());
+//        }
         ExcelDatum excelDatum = new ExcelDatum();
         excelDatum.setHeaders(headers);
         excelDatum.setBodies(bodies);
@@ -104,29 +108,43 @@ public class ExcelReader extends HeaderReader {
 
     @Override
     public ExcelDatum read(InputStream inputStream, int sheetNo) throws Exception {
-        return read(newWorkbook(inputStream), sheetNo);
+        try {
+            return read(newWorkbook(inputStream), sheetNo);
+        } finally {
+            inputStream.close();
+        }
     }
 
     @Override
     public ExcelDatum read(InputStream inputStream, String sheetName) throws Exception {
-        Workbook workbook = newWorkbook(inputStream);
-        return read(workbook, workbook.getSheet(sheetName));
+        try {
+            Workbook workbook = newWorkbook(inputStream);
+            return read(workbook, workbook.getSheet(sheetName));
+        } finally {
+            inputStream.close();
+        }
     }
 
 
     @Override
     public ExcelDatum read(InputStream in, Sheet sheet) throws Exception {
-        return read(newWorkbook(in), sheet);
+        try {
+            return read(newWorkbook(in), sheet);
+        } finally {
+            in.close();
+        }
     }
 
     @Override
-    public List<String> sheets(InputStream inputStream) {
+    public List<String> sheets(InputStream inputStream) throws IOException {
         List<String> sheets = new ArrayList<>();
         Workbook workbook;
         try {
             workbook = newWorkbook(inputStream);
         } catch (Exception e) {
             return sheets;
+        } finally {
+            inputStream.close();
         }
         if (workbook != null) {
             Iterator<Sheet> sheetIterator = workbook.sheetIterator();
@@ -187,5 +205,17 @@ public class ExcelReader extends HeaderReader {
         public void setHint(String hint) {
             this.hint = hint;
         }
+
+
+        public static CellVal getVal(List<CellVal> cellVals, final String header) {
+            for (CellVal v : cellVals) {
+                if (v.header.contains(header)) {
+                    return v;
+                }
+            }
+            return null;
+        }
+
+
     }
 }

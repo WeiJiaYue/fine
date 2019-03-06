@@ -9,4 +9,10 @@ public interface AutoGenerator {
 
 
     AutoGenerator propertiesSet(AutoGenerateProperties autoGenerateProperties);
+
+
+    AutoGenerator setRootDir(String rootDir);
+
+
+    AutoGenerator changeMapperDir(String mapperDir);
 }

@@ -7,7 +7,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.yunbao.framework.excel.Utils.*;
+import static com.yunbao.framework.excel.Utils.getCellValue;
+import static com.yunbao.framework.excel.Utils.isMergeCell;
+import static com.yunbao.framework.excel.Utils.replaceBlank;
 
 
 /**
@@ -15,7 +17,6 @@ import static com.yunbao.framework.excel.Utils.*;
  */
 public abstract class HeaderReader implements Reader {
 
-    protected boolean enableValidate;
 
     protected Validator validator;
 
@@ -35,7 +36,6 @@ public abstract class HeaderReader implements Reader {
     public HeaderReader(Validator validator, Resolver matrixResolver) {
         this.validator = validator;
         this.matrixResolver = matrixResolver;
-        this.enableValidate = true;
     }
 
     @Override
@@ -125,7 +125,7 @@ public abstract class HeaderReader implements Reader {
             i += step;
         }
         matrixResolver.isInvalidHeader(headers);
-        if (enableValidate) {
+        if (validator.needToValidate()) {
             validator.requiredHeaders(headers);
         }
         this.headers = headers;
@@ -154,6 +154,10 @@ public abstract class HeaderReader implements Reader {
     }
 
     protected Workbook newWorkbook(InputStream in) throws Exception {
-        return WorkbookFactory.create(in);
+        try {
+            return WorkbookFactory.create(in);
+        } finally {
+            in.close();
+        }
     }
 }

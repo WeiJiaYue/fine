@@ -18,4 +18,6 @@ public interface Validator {
     boolean requiredHeaders(List<String> headers);
 
     ExcelReader.CellVal requiredCellVal(ExcelReader.CellVal value);
+
+    void validateDuplicate(List<List<ExcelReader.CellVal>> bodies, String matchingKeyword);
 }

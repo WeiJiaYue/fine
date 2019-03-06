@@ -3,6 +3,7 @@ package com.yunbao.framework.excel;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public interface Reader {
 
     ExcelDatum read(InputStream inputStream, String sheetName) throws Exception;
 
-    List<String> sheets(InputStream inputStream) ;
+    List<String> sheets(InputStream inputStream) throws IOException;
 
 
 }

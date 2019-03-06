@@ -82,5 +82,25 @@ public class DefaultValidator implements Validator {
         return cellVal;
     }
 
+    @Override
+    public void validateDuplicate(List<List<ExcelReader.CellVal>> bodies, String matchingKeyword) {
+        for (int i = 0; i < bodies.size(); i++) {
+            List<ExcelReader.CellVal> preRow = bodies.get(i);
+            ExcelReader.CellVal compare = ExcelReader.CellVal.getVal(preRow, matchingKeyword);
+            for (int j = i + 1; j < bodies.size(); j++) {
+                List<ExcelReader.CellVal> row = bodies.get(j);
+                ExcelReader.CellVal beCompared = ExcelReader.CellVal.getVal(row, matchingKeyword);
+                if (compare != null && beCompared != null && beCompared.getHeader().equals(Utils.placeholder_on_blank_cell_value)) {
+                    if (compare.getVal().equals(beCompared.getVal())) {
+                        String hint = beCompared.getHeader() + "为" + beCompared.getVal() + "请勿重复存在";
+                        beCompared.setHint(beCompared.getHint() == null ? "" : beCompared.getHint() + "," + hint);
+                        break;
+                    }
+                }
+            }
 
+        }
+
+
+    }
 }

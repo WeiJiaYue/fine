@@ -74,6 +74,9 @@ public abstract class MatrixResolver extends AbstractResolver {
             Row row = rows.next();
             boolean wholeRowAreNull = true; //标识整行都为空
             for (int i = row.getFirstCellNum(); i <= row.getLastCellNum() && i < version.getMaxColumns(); i++) {
+                if(row.getFirstCellNum()==-1||row.getLastCellNum()==-1){
+                    break;
+                }
                 Cell cell = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                 if (cell == null) {
                     continue;
